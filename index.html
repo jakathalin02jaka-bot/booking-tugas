@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Booking Tugas Baru</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Unbounded:wght@700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: judul besar di atas, panel isian di kiri, pratinjau chat WhatsApp menempel di kanan.
+   Identitas: "kilat" (kuning sinyal) di atas tinta biru tua; hijau WhatsApp hanya untuk tombol kirim. */
+:root{
+  --bg:#EDF0F5; --glow:rgba(255,194,26,.24);
+  --surface:#FFFFFF; --surface-2:#F5F7FB;
+  --fg:#0E1A30; --fg-2:#41506A; --fg-3:#5A6A85;
+  --line:#D5DBE7; --line-strong:#B4BED0;
+  --accent:#FFC21A; --accent-ink:#2A1D00; --accent-soft:#FFF4CF;
+  --warn-bg:#FFF1C2; --warn-fg:#5B4300;
+  --ok-bg:#0B7A43; --ok-fg:#FFFFFF; --ok:#0B7A43;
+  --err:#C0292B;
+  --wa:#25D366; --wa-ink:#052E16; --wa-shadow:rgba(37,211,102,.55);
+  --idle-bg:#DCE2EC; --idle-fg:#52617B;
+  --focus:#0E1A30; --ring:rgba(255,194,26,.6);
+  --chat-bg:#EFEAE2; --chat-dot:rgba(14,26,48,.07); --chat-head:#F0F2F5; --chat-head-fg:#111B21;
+  --bubble:#D9FDD3; --bubble-fg:#111B21; --bubble-muted:#4F6068; --pill:#FFFFFF; --flash:rgba(255,194,26,.55);
+  --shadow:0 1px 2px rgba(14,26,48,.06),0 18px 36px -18px rgba(14,26,48,.22);
+  --f-display:'Unbounded','Plus Jakarta Sans',system-ui,sans-serif;
+  --f-body:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1020; --glow:rgba(255,194,26,.11);
+    --surface:#121A2E; --surface-2:#0D1426;
+    --fg:#EAF0FB; --fg-2:#A9B6CE; --fg-3:#8392AE;
+    --line:#233048; --line-strong:#34445F;
+    --accent-soft:#3A2F0A; --warn-bg:#3A2F0A; --warn-fg:#FFD866;
+    --ok-bg:#4ADE96; --ok-fg:#04210F; --ok:#4ADE96;
+    --err:#FF9A9A;
+    --idle-bg:#1B2540; --idle-fg:#93A2BF;
+    --focus:#FFC21A; --ring:rgba(255,194,26,.38);
+    --chat-bg:#0B141A; --chat-dot:rgba(255,255,255,.05); --chat-head:#202C33; --chat-head-fg:#E9EDEF;
+    --bubble:#005C4B; --bubble-fg:#E9EDEF; --bubble-muted:#A6CBC2; --pill:#1D2A32; --flash:rgba(255,194,26,.4);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 18px 36px -18px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1020; --glow:rgba(255,194,26,.11);
+  --surface:#121A2E; --surface-2:#0D1426;
+  --fg:#EAF0FB; --fg-2:#A9B6CE; --fg-3:#8392AE;
+  --line:#233048; --line-strong:#34445F;
+  --accent-soft:#3A2F0A; --warn-bg:#3A2F0A; --warn-fg:#FFD866;
+  --ok-bg:#4ADE96; --ok-fg:#04210F; --ok:#4ADE96;
+  --err:#FF9A9A;
+  --idle-bg:#1B2540; --idle-fg:#93A2BF;
+  --focus:#FFC21A; --ring:rgba(255,194,26,.38);
+  --chat-bg:#0B141A; --chat-dot:rgba(255,255,255,.05); --chat-head:#202C33; --chat-head-fg:#E9EDEF;
+  --bubble:#005C4B; --bubble-fg:#E9EDEF; --bubble-muted:#A6CBC2; --pill:#1D2A32; --flash:rgba(255,194,26,.4);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 18px 36px -18px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  background:radial-gradient(900px 360px at 88% -80px,var(--glow),transparent 70%),var(--bg);
+  color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%;
+}
+.page{
+  max-width:1080px;margin:0 auto;
+  padding-block:clamp(20px,4vw,44px) 40px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+
+/* Hero */
+.hero{display:grid;gap:14px;max-width:46rem;margin-bottom:clamp(20px,3vw,32px)}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:40px;height:40px;border-radius:12px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.mark svg{width:22px;height:22px}
+.kicker{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-2)}
+h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(1.9rem,1.1rem + 3.4vw,3.2rem);line-height:1.1;letter-spacing:-.02em;text-wrap:balance}
+h1 mark{background:linear-gradient(transparent 60%,var(--accent) 60%,var(--accent) 94%,transparent 94%);color:inherit;padding:0 .06em}
+.lede{margin:0;font-size:1.0625rem;color:var(--fg-2);max-width:38rem}
+.facts{display:flex;flex-wrap:wrap;gap:6px 18px;margin:4px 0 0;padding:0;list-style:none;font-size:13px;font-weight:600;color:var(--fg-2)}
+.facts li{display:flex;align-items:center;gap:6px}
+.facts svg{width:15px;height:15px;color:var(--ok)}
+
+/* Layout */
+.layout{display:grid;gap:20px;grid-template-columns:minmax(0,1fr);grid-template-areas:"fields" "preview" "cta"}
+.fields{grid-area:fields;min-width:0}
+.preview{grid-area:preview;min-width:0}
+.cta{grid-area:cta;min-width:0}
+@media (min-width:880px){
+  .layout{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);grid-template-areas:"fields preview" "cta preview";align-items:start;column-gap:28px}
+  .preview{position:sticky;top:24px}
+}
+
+/* Panel isian */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+.panel-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;padding:18px 22px;border-bottom:1px solid var(--line)}
+.panel-head h2{margin:0;font-size:1rem;font-weight:800}
+.progress{display:flex;align-items:center;gap:10px}
+.bars{display:flex;gap:4px}
+.seg{width:28px;height:6px;border-radius:3px;background:var(--line);transition:background .25s}
+.seg.on{background:var(--accent)}
+.progress.done .seg.on{background:var(--ok-bg)}
+.pcount{font-family:var(--f-mono);font-size:12px;color:var(--fg-2)}
+
+.field{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;padding:20px 22px}
+.field + .field{border-top:1px solid var(--line)}
+.step{width:32px;height:32px;margin-top:1px;border-radius:50%;border:1.5px solid var(--line-strong);display:grid;place-items:center;font-family:var(--f-mono);font-size:13px;font-weight:500;color:var(--fg-2);transition:background .2s,border-color .2s}
+.step svg{width:16px;height:16px;display:none}
+.field[data-state="valid"] .step{background:var(--ok-bg);border-color:var(--ok-bg);color:var(--ok-fg)}
+.field[data-state="valid"] .step .n{display:none}
+.field[data-state="valid"] .step svg{display:block}
+.field[data-state="invalid"] .step{border-color:var(--err);color:var(--err)}
+.label{display:block;font-weight:700;font-size:15px;line-height:1.35}
+.hint{margin:3px 0 0;font-size:13px;color:var(--fg-3)}
+.control{margin-top:12px}
+input[type="tel"],input[type="datetime-local"],textarea{
+  display:block;width:100%;min-height:48px;padding:12px 14px;font:inherit;font-size:16px;color:var(--fg);
+  background:var(--surface-2);border:1.5px solid var(--line-strong);border-radius:12px;
+  transition:border-color .15s,box-shadow .15s;
+}
+textarea{resize:vertical;min-height:96px;line-height:1.5}
+input::placeholder,textarea::placeholder{color:var(--fg-3);opacity:.85}
+input:focus-visible,textarea:focus-visible{outline:none;border-color:var(--focus);box-shadow:0 0 0 4px var(--ring)}
+.field[data-state="invalid"] input,.field[data-state="invalid"] textarea{border-color:var(--err)}
+.note{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:5px 11px 5px 9px;border-radius:999px;background:var(--warn-bg);color:var(--warn-fg);font-size:12.5px;font-weight:700}
+.note svg{width:15px;height:15px;flex:none}
+.err{display:flex;gap:6px;align-items:flex-start;margin:8px 0 0;font-size:13px;font-weight:600;color:var(--err)}
+.err svg{width:16px;height:16px;flex:none;margin-top:2px}
+.meta{display:flex;justify-content:space-between;gap:12px;margin-top:6px;font-size:12.5px;color:var(--fg-3)}
+.meta span:last-child{font-family:var(--f-mono);white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font:inherit;font-size:13px;font-weight:600;min-height:34px;padding:6px 12px;border-radius:999px;border:1px solid var(--line-strong);background:var(--surface);color:var(--fg);cursor:pointer;transition:background .15s,border-color .15s}
+.chip:hover{background:var(--accent-soft);border-color:var(--accent)}
+.chip:focus-visible,.ghost:focus-visible,.send:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.timeleft{margin:10px 0 0;font-family:var(--f-mono);font-size:12.5px;color:var(--fg-2)}
+
+/* CTA */
+.cta{display:grid;gap:12px}
+.send{display:flex;align-items:center;justify-content:center;gap:12px;min-height:62px;padding:10px 20px;border-radius:16px;background:var(--wa);color:var(--wa-ink);text-decoration:none;font-weight:800;font-size:16px;line-height:1.25;box-shadow:0 14px 26px -14px var(--wa-shadow);transition:transform .15s,background .2s}
+.send:hover{transform:translateY(-1px)}
+.send svg{width:26px;height:26px;flex:none}
+.send small{display:block;font-family:var(--f-mono);font-size:12px;font-weight:500;opacity:.85}
+.send[aria-disabled="true"]{background:var(--idle-bg);color:var(--idle-fg);box-shadow:none}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.ghost{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;font:inherit;font-size:14px;font-weight:700;color:var(--fg);background:transparent;border:1.5px solid var(--line-strong);border-radius:12px;cursor:pointer}
+.ghost:hover{background:var(--surface)}
+.ghost svg{width:18px;height:18px}
+.final{margin:0;font-size:13px;color:var(--fg-2);flex:1 1 14rem;min-width:0}
+.status{margin:0;min-height:1.4em;font-size:13px;font-weight:600;color:var(--fg)}
+
+/* Pratinjau chat */
+.chat{background:var(--chat-bg);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow)}
+.chat-head{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--chat-head);color:var(--chat-head-fg);border-bottom:1px solid var(--line)}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.who{min-width:0;flex:1}
+.who strong{display:flex;align-items:center;gap:6px;font-size:15px}
+.who strong svg{width:16px;height:16px;color:var(--wa)}
+.who span{display:block;font-family:var(--f-mono);font-size:12px;opacity:.75}
+.code{font-family:var(--f-mono);font-size:11px;padding:4px 8px;border-radius:6px;background:var(--pill);border:1px solid var(--line);color:var(--chat-head-fg);white-space:nowrap}
+.chat-body{display:flex;flex-direction:column;gap:12px;padding:16px;min-height:300px;background-image:radial-gradient(var(--chat-dot) 1px,transparent 1.2px);background-size:18px 18px}
+.day{align-self:center;padding:4px 12px;border-radius:8px;background:var(--pill);color:var(--bubble-muted);font-size:11.5px;font-weight:600}
+.bubble-wrap{display:flex;justify-content:flex-end}
+.bubble{max-width:100%;padding:10px 12px 6px;border-radius:12px 0 12px 12px;background:var(--bubble);color:var(--bubble-fg);font-size:13.5px;line-height:1.55;overflow-wrap:anywhere;box-shadow:0 1px 1px rgba(0,0,0,.14)}
+.ln{min-height:1.55em;border-radius:4px}
+.ln strong{font-weight:700}
+.ph{color:var(--bubble-muted);font-style:italic}
+.rule{height:1px;margin:7px 0;background:currentColor;opacity:.28}
+.flash{animation:flash .9s ease-out}
+@keyframes flash{from{background:var(--flash)}to{background:transparent}}
+.stamp{margin-top:2px;text-align:right;font-size:11px;color:var(--bubble-muted);font-variant-numeric:tabular-nums}
+.preview-note{margin:10px 4px 0;font-size:12.5px;color:var(--fg-3)}
+
+.foot{margin-top:30px;font-size:12.5px;color:var(--fg-3)}
+.foot p{margin:0;max-width:44rem}
+
+@media (max-width:420px){
+  .field{padding:18px 16px;gap:12px}
+  .panel-head{padding:16px}
+  .seg{width:22px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.2 2 4.5 13.4h6.1L9.8 22l9.7-12.2h-6.2L13.2 2z" fill="currentColor"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 11v6M12 7.5v.01" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z" fill="currentColor"/></symbol>
+  <symbol id="i-verified" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor"/></symbol>
+</svg>
+
+<div class="page">
+  <header class="hero">
+    <div class="brand">
+      <span class="mark"><svg aria-hidden="true"><use href="#i-bolt"/></svg></span>
+      <span class="kicker">Portal Order &middot; Fast Track</span>
+    </div>
+    <h1>Booking Tugas <mark>Baru</mark></h1>
+    <p class="lede">Isi tiga hal di bawah. Pesan booking tersusun otomatis dan langsung terbuka di WhatsApp admin.</p>
+    <ul class="facts">
+      <li><svg aria-hidden="true"><use href="#i-check"/></svg>3 isian saja</li>
+      <li><svg aria-hidden="true"><use href="#i-check"/></svg>Tanpa akun atau login</li>
+      <li><svg aria-hidden="true"><use href="#i-check"/></svg>Dikirim lewat WhatsApp</li>
+    </ul>
+  </header>
+
+  <form id="bookingForm" class="layout" novalidate>
+    <section class="fields panel" aria-labelledby="panelTitle">
+      <div class="panel-head">
+        <h2 id="panelTitle">Detail booking</h2>
+        <div class="progress" id="progress">
+          <div class="bars" aria-hidden="true"><span class="seg"></span><span class="seg"></span><span class="seg"></span></div>
+          <span class="pcount" id="pcount" aria-live="polite">0 dari 3 siap</span>
+        </div>
+      </div>
+
+      <div class="field" id="f-wa" data-state="idle">
+        <div class="step" aria-hidden="true"><span class="n">1</span><svg><use href="#i-check"/></svg></div>
+        <div>
+          <label class="label" for="waPemesan">Nomor WhatsApp Anda</label>
+          <p class="hint" id="h-wa">Admin akan menghubungi lewat nomor ini. Contoh: 0812 3456 7890</p>
+          <div class="note"><svg aria-hidden="true"><use href="#i-info"/></svg>Isi nomor Anda, bukan nomor admin</div>
+          <div class="control">
+            <input type="tel" id="waPemesan" inputmode="tel" autocomplete="tel" placeholder="0812 3456 7890" aria-describedby="h-wa e-wa" aria-invalid="false" required>
+            <p class="err" id="e-wa" hidden aria-live="polite"><svg aria-hidden="true"><use href="#i-info"/></svg><span></span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="field" id="f-task" data-state="idle">
+        <div class="step" aria-hidden="true"><span class="n">2</span><svg><use href="#i-check"/></svg></div>
+        <div>
+          <label class="label" for="detailTugas">Tugas yang ingin dikerjakan</label>
+          <p class="hint" id="h-task">Jelaskan singkat, misalnya makalah atau resume jurnal (2 halaman).</p>
+          <div class="control">
+            <textarea id="detailTugas" rows="3" maxlength="280" placeholder="Tulis penjelasan singkat tugas di sini" aria-describedby="h-task e-task" aria-invalid="false" required></textarea>
+            <p class="err" id="e-task" hidden aria-live="polite"><svg aria-hidden="true"><use href="#i-info"/></svg><span></span></p>
+            <div class="meta"><span>Jumlah halaman belum disebut? Otomatis ditulis 1 halaman.</span><span id="taskCount">0/280</span></div>
+            <div class="chips" role="group" aria-label="Contoh tugas">
+              <button type="button" class="chip" data-task="Makalah">Makalah</button>
+              <button type="button" class="chip" data-task="Resume jurnal (2 halaman)">Resume jurnal</button>
+              <button type="button" class="chip" data-task="Presentasi PPT">Presentasi PPT</button>
+              <button type="button" class="chip" data-task="Laporan">Laporan</button>
+              <button type="button" class="chip" data-task="Rapikan format dokumen">Rapikan format</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field" id="f-dl" data-state="idle">
+        <div class="step" aria-hidden="true"><span class="n">3</span><svg><use href="#i-check"/></svg></div>
+        <div>
+          <label class="label" for="deadline">Kapan tugas harus selesai?</label>
+          <p class="hint" id="h-dl">Pilih tanggal dan jam batas pengumpulan.</p>
+          <div class="control">
+            <input type="datetime-local" id="deadline" aria-describedby="h-dl e-dl" aria-invalid="false" required>
+            <p class="err" id="e-dl" hidden aria-live="polite"><svg aria-hidden="true"><use href="#i-info"/></svg><span></span></p>
+            <p class="timeleft" id="timeLeft"></p>
+            <div class="chips" role="group" aria-label="Pilihan cepat deadline">
+              <button type="button" class="chip" data-preset="malam">Malam ini 23.59</button>
+              <button type="button" class="chip" data-preset="besok">Besok 12.00</button>
+              <button type="button" class="chip" data-preset="lusa">Lusa 12.00</button>
+              <button type="button" class="chip" data-preset="pekan">7 hari lagi</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="preview" aria-label="Pratinjau pesan WhatsApp">
+      <div class="chat">
+        <div class="chat-head">
+          <div class="avatar" aria-hidden="true">AD</div>
+          <div class="who">
+            <strong>Admin Tugas <svg aria-hidden="true"><use href="#i-verified"/></svg></strong>
+            <span>0838-0985-4477</span>
+          </div>
+          <span class="code" id="codeTag">BOOK-2026-000</span>
+        </div>
+        <div class="chat-body">
+          <div class="day">Pratinjau, belum terkirim</div>
+          <div class="bubble-wrap">
+            <div class="bubble">
+              <div id="bubble"></div>
+              <div class="stamp" id="stamp">00.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="preview-note">Pesan ini terisi sendiri saat Anda mengetik.</p>
+    </aside>
+
+    <div class="cta">
+      <a class="send" id="send" href="https://wa.me/6283809854477" target="_blank" rel="noopener" aria-disabled="true">
+        <svg aria-hidden="true"><use href="#i-wa"/></svg>
+        <span>Kirim ke WhatsApp<small>0838-0985-4477</small></span>
+      </a>
+      <div class="row">
+        <button type="button" class="ghost" id="copyBtn"><svg aria-hidden="true"><use href="#i-copy"/></svg>Salin pesan</button>
+        <p class="final">Booking selesai setelah Anda menekan kirim di WhatsApp.</p>
+      </div>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </div>
+  </form>
+
+  <footer class="foot">
+    <p>Isian Anda hanya dipakai untuk menyusun pesan dan membuka chat WhatsApp. Halaman ini tidak menyimpan apa pun.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var ADMIN_WA = '6283809854477';
+  var ADMIN_LOCAL = '083809854477';
+  var BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  var HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+
+  function $(id) { return document.getElementById(id); }
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function toLocalInput(d) {
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+  function atTime(offsetDays, h, m) {
+    var d = new Date();
+    d.setDate(d.getDate() + offsetDays);
+    d.setHours(h, m, 0, 0);
+    return d;
+  }
+  function formatTanggalIndo(d) {
+    return d.getDate() + ' ' + BULAN[d.getMonth()] + ' ' + d.getFullYear() + ' pukul ' + pad(d.getHours()) + '.' + pad(d.getMinutes());
+  }
+  function normPhone(raw) {
+    var d = raw.replace(/[^\d+]/g, '');
+    if (d.indexOf('+62') === 0) d = '0' + d.slice(3);
+    else if (d.indexOf('62') === 0) d = '0' + d.slice(2);
+    else if (d.charAt(0) === '8') d = '0' + d;
+    return d.replace(/\D/g, '');
+  }
+  function leftText(when) {
+    var ms = when.getTime() - Date.now();
+    if (isNaN(ms)) return '';
+    if (ms <= 0) return 'waktu sudah lewat';
+    var m = Math.floor(ms / 60000), d = Math.floor(m / 1440), h = Math.floor((m % 1440) / 60), mm = m % 60, p = [];
+    if (d) p.push(d + ' hari');
+    if (h) p.push(h + ' jam');
+    if (!d && mm) p.push(mm + ' menit');
+    if (!p.length) p.push('kurang dari 1 menit');
+    return 'sisa ' + p.join(' ');
+  }
+  function presetDate(k) {
+    if (k === 'malam') {
+      var d = atTime(0, 23, 59);
+      if (d.getTime() <= Date.now()) d = atTime(1, 23, 59);
+      return d;
+    }
+    if (k === 'besok') return atTime(1, 12, 0);
+    if (k === 'lusa') return atTime(2, 12, 0);
+    return atTime(7, 12, 0);
+  }
+
+  var code = 'BOOK-' + new Date().getFullYear() + '-' + (Math.floor(Math.random() * 900) + 100);
+  var el = {
+    wa: $('waPemesan'), task: $('detailTugas'), dl: $('deadline'),
+    bubble: $('bubble'), send: $('send'), copy: $('copyBtn'), status: $('status'),
+    count: $('taskCount'), left: $('timeLeft'), stamp: $('stamp'), code: $('codeTag'),
+    pcount: $('pcount'), progress: $('progress')
+  };
+  var fields = { wa: $('f-wa'), task: $('f-task'), dl: $('f-dl') };
+  var errEls = { wa: $('e-wa'), task: $('e-task'), dl: $('e-dl') };
+  var inputs = { wa: el.wa, task: el.task, dl: el.dl };
+  var segs = el.progress.querySelectorAll('.seg');
+  var touched = { wa: false, task: false, dl: false };
+  var attempted = false;
+  var prevKeys = null;
+
+  function compute() {
+    var digits = normPhone(el.wa.value);
+    var task = el.task.value.replace(/\s*\n+\s*/g, '; ').replace(/\s+/g, ' ').trim();
+    var when = new Date(el.dl.value);
+    var errs = { wa: '', task: '', dl: '' };
+
+    if (!digits) errs.wa = 'Isi nomor WhatsApp Anda.';
+    else if (digits === ADMIN_LOCAL) errs.wa = 'Itu nomor admin. Isi nomor WhatsApp Anda sendiri.';
+    else if (!/^08\d{8,11}$/.test(digits)) errs.wa = 'Gunakan format 08xx atau +62 8xx, 10 sampai 13 digit.';
+
+    if (task.length < 3) errs.task = task ? 'Tambahkan sedikit detail, misalnya jenis tugasnya.' : 'Tulis jenis tugas, misalnya makalah.';
+
+    if (isNaN(when.getTime())) errs.dl = 'Pilih tanggal dan jam selesai.';
+    else if (when.getTime() <= Date.now()) errs.dl = 'Waktu itu sudah lewat. Pilih waktu berikutnya.';
+
+    var hasPages = /(\d+)\s*(halaman|hal|lembar|slide)/i.test(task);
+    return {
+      errs: errs,
+      digits: digits,
+      last4: digits.length >= 4 ? digits.slice(-4) : '',
+      detail: task ? (hasPages ? task : task + ' (1 halaman)') : '',
+      when: when,
+      whenText: isNaN(when.getTime()) ? '' : formatTanggalIndo(when)
+    };
+  }
+
+  function buildLines(v) {
+    var T = function (s) { return { k: 't', s: s }; };
+    var B = function (s) { return { k: 'b', s: s }; };
+    var P = function (s) { return { k: 'ph', s: s }; };
+    return [
+      [T('📋 '), B('BOOKING TUGAS BARU')],
+      [{ k: 'rule', s: '━━━━━━━━━━━━━━━━━━━━' }],
+      [T('🔖 '), B('Nomor:'), T(' ' + code)],
+      [T('👤 '), B('Nama:'), T(' Pemesan ('), v.last4 ? T(v.last4) : P('xxxx'), T(')')],
+      [T('📱 '), B('WA:'), T(' '), v.digits ? T(v.digits) : P('08xx xxxx xxxx')],
+      [T('📚 '), B('Tugas:'), T(' Lainnya')],
+      [T('📝 '), B('Detail:'), T(' '), v.detail ? T(v.detail) : P('makalah (1 halaman)')],
+      [T('⏰ '), B('Deadline:'), T(' '), v.whenText ? T(v.whenText) : P('pilih tanggal dan jam')]
+    ];
+  }
+  function linesToText(lines) {
+    return lines.map(function (parts) {
+      return parts.map(function (p) { return p.k === 'b' ? '*' + p.s + '*' : p.s; }).join('');
+    }).join('\n');
+  }
+
+  function renderBubble(lines) {
+    var keys = lines.map(function (parts) { return parts.map(function (p) { return p.k + ':' + p.s; }).join('|'); });
+    el.bubble.textContent = '';
+    lines.forEach(function (parts, i) {
+      var row = document.createElement('div');
+      if (parts.length === 1 && parts[0].k === 'rule') {
+        row.className = 'rule';
+        row.setAttribute('aria-hidden', 'true');
+      } else {
+        row.className = 'ln';
+        if (prevKeys && prevKeys[i] !== keys[i]) row.className += ' flash';
+        parts.forEach(function (p) {
+          var node;
+          if (p.k === 'b') { node = document.createElement('strong'); node.textContent = p.s; }
+          else if (p.k === 'ph') { node = document.createElement('span'); node.className = 'ph'; node.textContent = p.s; }
+          else { node = document.createTextNode(p.s); }
+          row.appendChild(node);
+        });
+      }
+      el.bubble.appendChild(row);
+    });
+    prevKeys = keys;
+  }
+
+  function render() {
+    var v = compute();
+    var validCount = 0;
+
+    ['wa', 'task', 'dl'].forEach(function (k, i) {
+      var err = v.errs[k];
+      var show = !!err && (touched[k] || attempted);
+      if (!err) validCount++;
+      fields[k].setAttribute('data-state', !err ? 'valid' : (show ? 'invalid' : 'idle'));
+      inputs[k].setAttribute('aria-invalid', show ? 'true' : 'false');
+      errEls[k].hidden = !show;
+      errEls[k].querySelector('span').textContent = show ? err : '';
+      segs[i].className = 'seg' + (!err ? ' on' : '');
+    });
+
+    el.progress.className = 'progress' + (validCount === 3 ? ' done' : '');
+    el.pcount.textContent = validCount === 3 ? 'Siap dikirim' : validCount + ' dari 3 siap';
+    el.count.textContent = el.task.value.length + '/280';
+
+    var now = new Date();
+    el.stamp.textContent = pad(now.getHours()) + '.' + pad(now.getMinutes());
+    el.left.textContent = isNaN(v.when.getTime()) ? '' : HARI[v.when.getDay()] + ', ' + v.when.getDate() + ' ' + BULAN[v.when.getMonth()] + ' · ' + leftText(v.when);
+
+    var lines = buildLines(v);
+    renderBubble(lines);
+
+    var ready = validCount === 3;
+    el.send.setAttribute('aria-disabled', ready ? 'false' : 'true');
+    el.send.href = ready
+      ? 'https://wa.me/' + ADMIN_WA + '?text=' + encodeURIComponent(linesToText(lines))
+      : 'https://wa.me/' + ADMIN_WA;
+    return { ready: ready, text: linesToText(lines) };
+  }
+
+  function focusFirstInvalid() {
+    var v = compute();
+    var order = ['wa', 'task', 'dl'];
+    for (var i = 0; i < order.length; i++) {
+      if (v.errs[order[i]]) { inputs[order[i]].focus(); return; }
+    }
+  }
+  function setStatus(msg) { el.status.textContent = msg; }
+  function selectBubble() {
+    try {
+      var r = document.createRange();
+      r.selectNodeContents(el.bubble);
+      var s = window.getSelection();
+      s.removeAllRanges();
+      s.addRange(r);
+    } catch (e) { /* abaikan */ }
+  }
+
+  ['wa', 'task', 'dl'].forEach(function (k) {
+    var input = inputs[k];
+    input.addEventListener('input', function () { setStatus(''); render(); });
+    input.addEventListener('blur', function () { touched[k] = true; render(); });
+  });
+  el.dl.addEventListener('change', function () { touched.dl = true; render(); });
+  el.wa.addEventListener('blur', function () {
+    var d = normPhone(el.wa.value);
+    if (/^08\d{8,11}$/.test(d)) el.wa.value = d.replace(/^(\d{4})(\d{4})(\d+)$/, '$1 $2 $3');
+    render();
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-task]'), function (b) {
+    b.addEventListener('click', function () {
+      var t = b.getAttribute('data-task');
+      var cur = el.task.value.trim();
+      if (!cur) el.task.value = t;
+      else if (cur.toLowerCase().indexOf(t.toLowerCase()) === -1) el.task.value = cur + ', ' + t;
+      touched.task = true;
+      setStatus('');
+      render();
+      el.task.focus();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-preset]'), function (b) {
+    b.addEventListener('click', function () {
+      el.dl.value = toLocalInput(presetDate(b.getAttribute('data-preset')));
+      touched.dl = true;
+      setStatus('');
+      render();
+    });
+  });
+
+  el.send.addEventListener('click', function (e) {
+    var s = render();
+    if (!s.ready) {
+      e.preventDefault();
+      attempted = true;
+      render();
+      setStatus('Lengkapi isian yang ditandai dulu, lalu kirim lagi.');
+      focusFirstInvalid();
+      return;
+    }
+    setStatus('WhatsApp dibuka di tab baru. Tekan kirim di sana untuk menyelesaikan booking.');
+  });
+
+  el.copy.addEventListener('click', function () {
+    var s = render();
+    if (!s.ready) {
+      attempted = true;
+      render();
+      setStatus('Lengkapi isian yang ditandai dulu, lalu salin pesan.');
+      focusFirstInvalid();
+      return;
+    }
+    var done = function () { setStatus('Pesan disalin. Tempel di chat admin 0838-0985-4477.'); };
+    var fail = function () { selectBubble(); setStatus('Pesan sudah terpilih. Tekan Ctrl+C (atau tahan lama di HP) untuk menyalin.'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(s.text).then(done, fail);
+    } else { fail(); }
+  });
+
+  $('bookingForm').addEventListener('submit', function (e) { e.preventDefault(); });
+
+  el.dl.min = toLocalInput(new Date());
+  el.dl.value = toLocalInput(atTime(1, 12, 0));
+  el.code.textContent = code;
+  render();
+  setInterval(render, 30000);
+})();
+</script>
+
+</body>
+</html>
